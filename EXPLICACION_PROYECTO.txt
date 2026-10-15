@@ -1,0 +1,158 @@
+================================================================================
+          EXPLICACION DEL PROYECTO BASE (SPRING INITIALIZR) - DEMO
+================================================================================
+
+1. DESCRIPCION GENERAL
+--------------------------------------------------------------------------------
+Este proyecto es una plantilla inicial ("esqueleto") generada con Spring Initializr 
+para el desarrollo de una aplicacion web en Java. Utiliza el framework Spring Boot,
+el cual simplifica la configuracion inicial, la gestion de dependencias y el despliegue
+mediante un servidor web embebido (Tomcat por defecto).
+
+2. EXPLICACION DETALLADA DE BUILD.GRADLE
+--------------------------------------------------------------------------------
+El archivo 'build.gradle' es el nucleo de configuracion de Gradle (la herramienta de 
+construccion y automatizacion de tareas). A continuacion se detalla cada bloque:
+
+A) BLOQUE PLUGINS:
+   plugins {
+       id 'java'
+       id 'org.springframework.boot' version '4.1.1'
+       id 'io.spring.dependency-management' version '1.1.7'
+   }
+   - 'java': Agrega capacidades para compilar codigo fuente Java, procesar recursos 
+     y empaquetar el proyecto en un archivo JAR.
+   - 'org.springframework.boot': Plugin esencial que permite empaquetar ejecutables 
+     (JARs autocontenidos con servidor embebido), ejecutar tareas como 'bootRun' y 
+     resolver la compatibilidad de versiones de Spring.
+   - 'io.spring.dependency-management': Gestiona las versiones de las dependencias 
+     (BOM - Bill of Materials). Gracias a esto, no es necesario especificar la version 
+     de cada libreria de Spring Boot en el bloque dependencies; Gradle usara versiones 
+     compatibles y probadas entre si automaticamente.
+
+B) METADATOS DEL PROYECTO:
+   group = 'com.example'
+   version = '0.0.1-SNAPSHOT'
+   - group: Identificador del paquete u organizacion al que pertenece el artefacto.
+   - version: Version actual del software. 'SNAPSHOT' indica que esta en desarrollo 
+     activo y no es una version definitiva de produccion.
+
+C) BLOQUE JAVA (TOOLCHAIN):
+   java {
+       toolchain {
+           languageVersion = JavaLanguageVersion.of(17)
+       }
+   }
+   - Configura Gradle para compilar y ejecutar usando Java 17. Con 'toolchain', Gradle 
+     puede detectar automaticamente el JDK 17 instalado en el sistema o descargarlo si 
+     es necesario, asegurando consistencia entre diferentes entornos de desarrollo.
+
+D) BLOQUE REPOSITORIES:
+   repositories {
+       mavenCentral()
+   }
+   - Indica donde Gradle busca y descarga las librerias externas y dependencias. 
+     Maven Central es el repositorio publico mas grande y estandar en el ecosistema Java.
+
+E) BLOQUE DEPENDENCIES (ALCANCES Y LIBRERIAS):
+   dependencies {
+       implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+       implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+       compileOnly 'org.projectlombok:lombok'
+       runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+       annotationProcessor 'org.projectlombok:lombok'
+       testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+       testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+       testCompileOnly 'org.projectlombok:lombok'
+       testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+       testAnnotationProcessor 'org.projectlombok:lombok'
+   }
+
+   * Explicacion de los alcances (scopes):
+     - implementation: La libreria es necesaria tanto para compilar el codigo como para 
+       ejecutar la aplicacion.
+     - compileOnly: Solo se requiere durante la compilacion (no se incluye en el JAR final).
+     - runtimeOnly: No se requiere para compilar el codigo Java directamente, pero si es 
+       indispensable al momento de correr la aplicacion.
+     - annotationProcessor: Herramienta que procesa anotaciones en tiempo de compilacion 
+       para generar codigo automatico.
+     - testImplementation / testCompileOnly / testRuntimeOnly: Mismas reglas anteriores, 
+       pero aplicadas exclusivamente al conjunto de pruebas (src/test).
+
+   * Detalle de cada libreria:
+     - spring-boot-starter-data-jpa: Modulo de Spring Data y Hibernate para la persistencia
+       y mapeo de entidades en bases de datos relacionales sin escribir SQL manual repetitivo.
+     - spring-boot-starter-webmvc: Provee el stack MVC clasico para crear controladores REST,
+       gestionar endpoints HTTP y levantar el servidor web embebido (Tomcat).
+     - lombok: Permite generar automaticamente metodos getters, setters, constructores, toString,
+       etc., usando anotaciones (evita escribir codigo repetitivo).
+     - mariadb-java-client: Driver JDBC necesario en tiempo de ejecucion para conectarse con MariaDB.
+     - starters de test y JUnit Platform: Conjunto de utilidades de testing (MockMvc, JUnit 5,
+       aserciones) para verificar el funcionamiento de controladores y repositorios.
+
+F) BLOQUE TASKS:
+   tasks.named('test') {
+       useJUnitPlatform()
+   }
+   - Configura la tarea estandar de testing de Gradle para utilizar el motor JUnit Platform 
+     (JUnit 5) al ejecutar las pruebas unitarias y de integracion.
+
+3. ESTRUCTURA DE ARCHIVOS Y CARPETAS
+--------------------------------------------------------------------------------
+demo/
+ │
+ ├── gradle/ & gradlew / gradlew.bat
+ │   Contiene el "Gradle Wrapper", que permite compilar y ejecutar el proyecto sin
+ │   necesidad de tener Gradle preinstalado globalmente en el sistema.
+ │
+ ├── build.gradle
+ │   Archivo de configuracion principal de Gradle donde se definen la version de Java,
+ │   los plugins y las dependencias (librerias) del proyecto.
+ │
+ └── src/
+      ├── main/
+      │    ├── java/com/example/demo/
+      │    │    └── DemoApplication.java
+      │    │        Punto de entrada principal del proyecto (contiene el metodo main).
+      │    │        La anotacion @SpringBootApplication habilita:
+      │    │        - Auto-configuracion de Spring Boot.
+      │    │        - Escaneo de componentes (@ComponentScan) en este paquete y subpaquetes.
+      │    │        - Definicion de configuraciones (@Configuration).
+      │    │
+      │    └── resources/
+      │         ├── application.properties
+      │         │   Archivo clave para variables de configuracion (puerto del servidor,
+      │         │   credenciales de la base de datos MariaDB, niveles de log, etc.).
+      │         ├── static/
+      │         │   Directorio para archivos estaticos (imagenes, estilos CSS, scripts JS).
+      │         └── templates/
+      │             Directorio para plantillas HTML (en caso de usar motores como Thymeleaf).
+      │
+      └── test/
+           └── java/com/example/demo/
+                └── DemoApplicationTests.java
+                    Clase para pruebas unitarias y de integracion basicas.
+
+4. FLUJO DE FUNCIONAMIENTO ACTUAL
+--------------------------------------------------------------------------------
+1. Al ejecutar el metodo main en 'DemoApplication.java':
+   - Spring Boot inicializa el ApplicationContext (contenedor de inversion de control e
+     inyeccion de dependencias).
+   - Inicia un servidor web embebido (por defecto en el puerto 8080).
+   - Intenta auto-configurar el origen de datos (DataSource) para MariaDB y JPA.
+     * ATENCION: Al estar incluida la dependencia de MariaDB y JPA, para iniciar 
+       correctamente el servicio sera necesario configurar la URL, usuario y 
+       contrasena de conexion en 'src/main/resources/application.properties', 
+       o deshabilitar temporalmente la auto-configuracion de DataSource si aun 
+       no se ha montado la base de datos.
+
+5. SIGUIENTES PASOS SUGERIDOS PARA LA ARQUITECTURA
+--------------------------------------------------------------------------------
+Para implementar la logica de negocio bajo una arquitectura multicapa estándar en Spring Boot,
+se recomienda crear dentro del paquete 'com.example.demo':
+- controller/: Para los controladores REST (@RestController) que manejan peticiones HTTP.
+- service/: Para la logica de negocio (@Service).
+- repository/: Interfaces de persistencia (@Repository) que extienden JpaRepository.
+- model/ o entity/: Clases entidad mapeadas a la base de datos (@Entity).
+- dto/: Clases de transferencia de datos entre el cliente y el servidor.
+================================================================================

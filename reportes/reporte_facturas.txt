@@ -1,0 +1,5 @@
+numeroFactura	fechaEmision	clienteDenominacion	condicionIva	puntoVentaDescripcion	importeTotal	cantidadItems
+1001	2026-03-15	Consumidor Final	IVA Responsable Inscripto	Sucursal Central	1500.00	2
+1002	2026-03-20	Empresa Tech S.A.	IVA Responsable Inscripto	Sucursal Central	85000.50	5
+1003	2026-04-05	Distribuidora del Sur	Monotributo	Sucursal Norte	12000.00	1
+1004	2026-04-10	Consumidor Final	IVA Responsable Inscripto	Sucursal Norte	35000.00	3
